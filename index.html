@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Хаб сборки сайтов</title>
+<style>
+:root{--bg:#0e1014;--side:#12151b;--card:#171a21;--line:#252a35;--tx:#e8eaef;--mut:#8a92a5;--ac:#5b8cff;--acs:#5b8cff1f;--fav:#f5b942;--red:#e5484d}
+.light{--bg:#f7f8fa;--side:#fff;--card:#fff;--line:#e4e7ec;--tx:#141820;--mut:#5f6777;--ac:#2f62e6;--acs:#2f62e614}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:15px/1.5 system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--tx);display:flex;min-height:100vh}
+button{font:inherit;cursor:pointer;color:var(--tx)}
+a{color:inherit}
+
+aside{width:250px;flex-shrink:0;background:var(--side);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{font-weight:700;font-size:16px;padding:0 10px 14px}
+.logo small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.sec{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:14px 10px 6px;display:flex;justify-content:space-between;align-items:center}
+.sec button{background:none;border:0;color:var(--mut);font-size:11px;letter-spacing:0;text-transform:none;padding:0}
+.sec button:hover{color:var(--ac)}
+.nav{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:none;border:0;border-radius:7px;padding:7px 10px;font-size:14px;color:var(--mut)}
+.nav:hover{background:var(--acs);color:var(--tx)}
+.nav.on{background:var(--acs);color:var(--ac);font-weight:600}
+.nav .n{font-size:12px;opacity:.7}
+.foot{margin-top:auto;padding-top:16px;display:flex;gap:6px}
+.foot button{flex:1;background:none;border:1px solid var(--line);border-radius:7px;padding:6px;font-size:12px;color:var(--mut)}
+.foot button:hover{color:var(--tx);border-color:var(--mut)}
+
+main{flex:1;min-width:0;padding:22px 32px 60px;max-width:1280px}
+.top{display:flex;gap:10px;align-items:center;margin-bottom:22px}
+.search{flex:1;min-width:0;padding:10px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit}
+.search:focus,dialog input:focus,dialog select:focus,dialog textarea:focus{outline:none;border-color:var(--ac)}
+.btn{padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);white-space:nowrap}
+.btn:hover{border-color:var(--mut)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:7px}
+.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+.pri:hover{filter:brightness(1.1);border-color:var(--ac)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.head h1{font-size:22px;margin:0}
+.head p{color:var(--mut);margin:4px 0 0;font-size:14px}
+
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.bar label{font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center}
+.bar select{padding:5px 8px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;font-size:13px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:12.5px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--mut)}
+.chip:hover{color:var(--tx);border-color:var(--mut)}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.chip i{font-style:normal;opacity:.65;margin-left:3px}
+
+.group{margin-top:28px}
+.group h2{font-size:15px;margin:0 0 2px;display:flex;gap:8px;align-items:baseline}
+.group h2 span{font-weight:400;color:var(--mut);font-size:13px}
+.group .desc{color:var(--mut);margin:0 0 12px;font-size:13.5px}
+.group h2+.grid{margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+
+.c{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s}
+.c:hover{border-color:var(--ac)}
+.ct{display:flex;align-items:center;gap:9px}
+.ct img{width:18px;height:18px;border-radius:4px;flex-shrink:0}
+.ct a{font-weight:600;text-decoration:none;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ct a:hover{color:var(--ac)}
+.ic{background:none;border:0;padding:2px 4px;color:var(--mut);font-size:15px;line-height:1;opacity:.55}
+.c:hover .ic{opacity:1}
+.ic:hover{color:var(--tx)}
+.ic.f{color:var(--fav);opacity:1}
+.ic.x:hover{color:var(--red)}
+.c p{margin:0;color:var(--mut);font-size:13.5px;flex:1}
+.note{margin:0;font-size:14px;border-left:2px solid var(--ac);padding:2px 0 2px 10px;color:var(--tx)!important;flex:1;white-space:pre-wrap}
+.note.empty{color:var(--mut)!important;border-color:var(--line)}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mut);background:none}
+button.tag:hover{border-color:var(--ac);color:var(--ac)}
+.tag.me{border-color:var(--ac);color:var(--ac)}
+.dom{margin-left:auto;font-size:12px;color:var(--mut);text-align:right}
+.dom small{display:block;font-size:11px;opacity:.75}
+
+.empty-box{border:1px dashed var(--line);border-radius:11px;padding:22px;color:var(--mut);font-size:14px;text-align:center}
+.empty-box button{margin-top:10px}
+.steps{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:6px 20px 6px 36px}
+.steps li{margin:10px 0;color:var(--mut)}
+.steps b{color:var(--tx)}
+
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;padding:22px;width:min(470px,94vw);max-height:90vh}
+dialog.wide{width:min(620px,94vw)}
+dialog::backdrop{background:#000a}
+dialog h3{margin:0 0 4px}
+dialog .hint{color:var(--mut);font-size:13px;margin:0 0 8px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:3px;margin:12px 0 4px}
+.seg button{flex:1;background:none;border:0;border-radius:7px;padding:6px;color:var(--mut);font-size:13.5px}
+.seg button.on{background:var(--card);color:var(--tx);font-weight:600;box-shadow:0 1px 2px #0003}
+dialog label{display:block;font-size:13px;color:var(--mut);margin:12px 0 4px}
+dialog input,dialog select,dialog textarea{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+dialog textarea{resize:vertical}
+.err{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+
+.trow{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;align-items:center;margin-top:6px}
+.trow input{padding:7px 9px;font-size:14px}
+.trow .ops{display:flex;gap:2px}
+.trow .ops button{background:none;border:1px solid var(--line);border-radius:6px;width:28px;height:30px;color:var(--mut);padding:0}
+.trow .ops button:hover{color:var(--tx);border-color:var(--mut)}
+.trow .ops .x:hover{color:var(--red);border-color:var(--red)}
+.trow small{grid-column:1/-1;color:var(--mut);font-size:12px;margin-top:-2px}
+.thead{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;font-size:12px;color:var(--mut);margin-top:12px}
+#tlist{max-height:52vh;overflow:auto;padding-right:2px}
+
+.opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px;width:100%;text-align:left;background:var(--bg)}
+.opt:hover{border-color:var(--ac)}
+.opt b{display:block;font-size:14.5px}
+.opt span{color:var(--mut);font-size:13px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+
+@media(max-width:800px){
+ body{flex-direction:column}
+ aside{width:auto;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px;gap:4px;border-right:0;border-bottom:1px solid var(--line)}
+ .logo,.sec,.nav .n{display:none}
+ .nav{width:auto;white-space:nowrap}
+ .foot{margin:0;padding:0}
+ main{padding:16px}
+ .head{flex-direction:column}
+ .trow,.thead{grid-template-columns:1fr auto}
+ .trow input.td,.thead span:nth-child(2){display:none}
+}
+</style>
+</head>
+<body>
+
+<aside id="side"></aside>
+
+<main>
+  <div class="top">
+    <input id="q" class="search" placeholder="Поиск по названию, описанию, подписи, тегам…">
+    <button id="addb" class="btn pri">+ Добавить</button>
+  </div>
+  <div class="head"><div><h1 id="ttl"></h1><p id="sub"></p></div><div id="hact"></div></div>
+  <div id="bar"></div>
+  <div id="m"></div>
+</main>
+
+<!-- Добавление / изменение ссылки -->
+<dialog id="dlg">
+  <form id="frm">
+    <h3 id="dt">Новая ссылка</h3>
+    <p class="hint">Сохраняется в этом браузере. Чтобы поделиться или сделать копию, есть кнопка «Поделиться».</p>
+    <div class="seg" id="kind">
+      <button type="button" data-k="ex">Пример сайта</button>
+      <button type="button" data-k="tool">Инструмент</button>
+    </div>
+    <label>Название *</label>
+    <input id="fn" maxlength="80" placeholder="Например: Linear">
+    <label>Адрес сайта *</label>
+    <input id="fu" placeholder="linear.app или https://…">
+    <div id="exf">
+      <label>Тип сайта</label>
+      <select id="fty"></select>
+      <div id="ntw" hidden><label>Новый тип</label><input id="fnt" maxlength="40" placeholder="Например: Рестораны"></div>
+      <label>Подпись: что понравилось</label>
+      <textarea id="fno" rows="3" maxlength="500" placeholder="Чистый hero, крупная типографика, удачный блок цен…"></textarea>
+      <label>Теги (через запятую)</label>
+      <input id="ftg" list="taglist" maxlength="150" placeholder="hero, тёмная тема, анимации">
+      <datalist id="taglist"></datalist>
+    </div>
+    <div id="tlf">
+      <label>Описание</label>
+      <textarea id="fd" rows="2" maxlength="200" placeholder="Для чего этот сайт"></textarea>
+      <label>Раздел</label>
+      <select id="fg"></select>
+      <div id="ngw" hidden><label>Новый раздел</label><input id="fng" maxlength="40"></div>
+      <label>Метка</label>
+      <input id="ft" list="lbl" maxlength="30" placeholder="free, платно, статья…">
+      <datalist id="lbl"><option>free</option><option>free tier</option><option>free + pro</option><option>платно</option><option>статья</option></datalist>
+    </div>
+    <div class="err" id="fe"></div>
+    <div class="acts"><button type="button" class="btn" data-close>Отмена</button><button type="submit" class="btn pri">Сохранить</button></div>
+  </form>
+</dialog>
+
+<!-- Управление типами -->
+<dialog id="tdlg" class="wide">
+  <h3>Типы примеров сайтов</h3>
+  <p class="hint">Переименовывай, меняй описание и порядок (↑↓), удаляй ненужные. Примеры из удалённого типа попадут в «Без типа», их можно будет перенести.</p>
+  <div class="thead"><span>Название</span><span>Описание</span><span style="width:92px"></span></div>
+  <div id="tlist"></div>
+  <button class="btn sm" id="tadd" style="margin-top:10px">+ Новый тип</button>
+  <div class="err" id="te"></div>
+  <div class="acts"><button class="btn" data-close>Отмена</button><button class="btn pri" id="tsave">Сохранить</button></div>
+</dialog>
+
+<!-- Поделиться -->
+<dialog id="sdlg">
+  <h3>Поделиться и резервная копия</h3>
+  <p class="hint">Всё хранится только в этом браузере. Отсюда можно отправить хаб другу или сохранить копию.</p>
+  <button class="opt" id="sh_pub"><div><b>Опубликовать на GitHub Pages</b><span>Хаб станет сайтом с постоянной ссылкой, её можно просто отправить друзьям. Обновляется в один клик.</span><span id="publast" style="display:block;margin-top:4px;color:var(--ac)"></span></div></button>
+  <button class="opt" id="sh_html"><div><b>Скачать хаб со своими ссылками (.html)</b><span>Один файл. Отправь его другу в мессенджере: он откроет его в браузере и увидит все твои примеры, подписи и типы. Свои ссылки он добавит сам.</span></div></button>
+  <button class="opt" id="sh_json"><div><b>Экспорт данных (.json)</b><span>Резервная копия или перенос на другой компьютер. Загружается обратно через «Импорт».</span></div></button>
+  <button class="opt" id="sh_imp"><div><b>Импорт (.json или .html)</b><span>Добавить ссылки из файла друга или из своей копии. Совпадающие ссылки не дублируются.</span></div></button>
+  <div class="acts" style="margin-top:14px"><button class="btn" data-close>Закрыть</button></div>
+</dialog>
+<!-- Публикация на GitHub Pages -->
+<dialog id="pdlg">
+  <h3>Публикация на GitHub Pages</h3>
+  <p class="hint">Хаб с твоими ссылками загрузится в публичный репозиторий GitHub и станет сайтом вида <b>логин.github.io/репозиторий</b>. Ссылку можно отправлять друзьям, обновление в один клик.</p>
+  <label>Репозиторий</label>
+  <input id="pr" maxlength="90" placeholder="site-hub" value="site-hub">
+  <label>Токен GitHub <a href="https://github.com/settings/tokens/new?scopes=repo&description=Site%20Hub" target="_blank" rel="noopener" style="color:var(--ac);font-size:12px;margin-left:6px">создать токен ↗</a></label>
+  <input id="ptk" type="password" autocomplete="off" placeholder="ghp_… или github_pat_…">
+  <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="prem" style="width:auto"> Запомнить токен на этом компьютере</label>
+  <label style="display:flex;gap:8px;align-items:center;margin-top:6px"><input type="checkbox" id="pdata" style="width:auto" checked> Включить мои примеры, подписи и ссылки</label>
+  <details style="margin-top:12px;font-size:13px;color:var(--mut)"><summary style="cursor:pointer">Как получить токен</summary>
+    <ol style="padding-left:18px;margin:8px 0">
+      <li>Нажми «создать токен»: откроется GitHub с уже отмеченным доступом <b>repo</b>.</li>
+      <li>Выбери срок действия и нажми <b>Generate token</b>.</li>
+      <li>Скопируй токен и вставь сюда. Он хранится только в этом браузере и не попадает в опубликованный файл.</li>
+    </ol>
+    Репозиторий будет публичным: так GitHub Pages работает на бесплатном аккаунте. Не добавляй в хаб ничего секретного.
+  </details>
+  <div id="pst" class="hint" style="margin-top:12px;white-space:pre-line"></div>
+  <div class="acts"><button class="btn" data-close>Закрыть</button><button class="btn" id="pcopy" hidden>Скопировать ссылку</button><button class="btn pri" id="pgo">Опубликовать</button></div>
+</dialog>
+<input type="file" id="imp" accept=".json,.html" hidden>
+<div class="toast" id="toast"></div>
+
+<script id="seed" type="application/json">null</script>
+<script>
+const SRC="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+
+/* ===== Встроенные инструменты ===== */
+const TOOLS=[
+{id:"blocks",t:"Готовые блоки",d:"Целые секции страницы: шапка, первый экран, цены, FAQ. Копируешь и подставляешь свои тексты.",i:[
+["Shadcnblocks","https://www.shadcnblocks.com/","2000+ блоков и шаблонов, ставится через shadcn CLI. Next.js, Vite, Astro, Remix.","платно"],
+["shadcn.io/blocks","https://www.shadcn.io/blocks","6000+ блоков в 56 категориях: hero, pricing, CTA, FAQ, features, testimonials.","есть free"],
+["Tailark","https://tailark.com/","Чистые hero и маркетинговые секции под shadcn.","free"],
+["Blocks.so","https://blocks.so/","Универсальный набор типовых секций под Next.js.","free"],
+["UI-Layouts","https://www.ui-layout.com/","40+ бесплатных блоков и много вариантов раскладки.","free"],
+["Kibo UI","https://www.kibo-ui.com/","Блоки уровня платных, «дорогой» вид.","free"],
+["Shadcn Studio","https://shadcnstudio.com/","Конструктор: собрать блоки мышкой, а не кодом.","free"],
+["Подборка на GitHub","https://github.com/NuzafNaim/shadecn","Большой список бесплатных shadcn-библиотек.","free"]]},
+{id:"anim",t:"Анимации и эффекты",d:"Добавляют «живость»: появление текста, бегущие логотипы, подсветка. Использовать точечно.",i:[
+["Magic UI","https://magicui.design/","150+ анимированных компонентов, дополнение к shadcn/ui. В Pro есть секции и шаблоны.","free + pro"],
+["Magic UI (.net)","https://magicui.net/","Дополнительный ресурс Magic UI.","—"],
+["Aceternity UI","https://ui.aceternity.com/","Эффектные компоненты на Framer Motion для яркого первого экрана.","free + pro"],
+["Motion Primitives","https://motion-primitives.com/","Аккуратные переходы без перегруза.","free"],
+["ReactBits","https://reactbits.dev/","Практичные React-сниппеты с эффектами.","free"]]},
+{id:"base",t:"Основа и компоненты",d:"Кнопки, формы, модальные окна, карточки. Из них состоят блоки, они задают общий вид сайта.",i:[
+["shadcn/ui","https://ui.shadcn.com/","Основа, на которую рассчитаны почти все библиотеки. Ставить первой.","free"],
+["Tailwind CSS","https://tailwindcss.com/","Утилитарные стили, на которых построены блоки.","free"],
+["21st.dev","https://21st.dev/","Каталог компонентов shadcn/Next.js с быстрым поиском.","free"],
+["Cult UI","https://www.cult-ui.com/","Альтернативный современный набор компонентов.","free"]]},
+{id:"ref",t:"Галереи референсов",d:"Чужие удачные сайты для вдохновения. Скриншот отсюда можно дать ИИ как образец.",i:[
+["Lapa Ninja","https://www.lapa.ninja/","7000+ лендингов, фильтры по категориям и UI-элементам.","free"],
+["Land-book","https://land-book.com/","Отобранные примеры, обновляются ежедневно.","free"]]},
+{id:"gen",t:"ИИ-генераторы",d:"Быстро получить первый черновик страницы или MVP по описанию.",i:[
+["v0","https://v0.dev/","Код на Next.js + Tailwind + shadcn, деплой через Vercel.","free tier"],
+["Bolt.new","https://bolt.new/","Работает полностью в браузере, от промпта до приложения.","free tier"],
+["Lovable","https://lovable.dev/","MVP и лендинги по описанию.","free tier"],
+["Replit","https://replit.com/","Онлайн-среда с ИИ-агентом и хостингом.","free tier"]]},
+{id:"art",t:"Статьи",d:"Полезное чтение о процессе.",i:[
+["Топ-10 инструментов вайб-кодинга 2026","https://lpmotor.ru/articles/top-10-instrumentov-dla-vibe-codinga-v-2026-2606","Обзор генераторов и ИИ-инструментов.","статья"],
+["12 проверок ИИ-сайта перед запуском","https://timekairos.com.ua/en/journal/ai-sajt-pered-zapuskom-12-perevirok-dlya-lovable-bolt-i-v0","Чек-лист для Lovable, Bolt и v0.","статья"]]}];
+
+
+/* ===== Типы примеров по умолчанию ===== */
+const DEFAULT_TYPES=[
+["sales","Продажи","Лендинги, которые ведут к покупке или заявке"],
+["product","Презентация товара","Страницы одного продукта, гаджета, услуги"],
+["personal","Личные сайты","Портфолио, резюме, сайты специалистов"],
+["company","Сайты компаний","Корпоративные сайты, «о нас», услуги"],
+["market","Онлайн-площадки","Маркетплейсы, каталоги, интернет-магазины"],
+["internal","Внутренние сайты","Интранет, дашборды, админки, базы знаний"],
+["saas","Сервисы и SaaS","Сайты онлайн-сервисов и приложений"],
+["media","Блоги и медиа","Статьи, журналы, новостные сайты"],
+["docs","Документация","Справочные центры, docs, гайды"],
+["event","Мероприятия","Конференции, курсы, вебинары"]].map(t=>({id:t[0],t:t[1],d:t[2]}));
+const NONE={id:"_none",t:"Без типа",d:"Примеры, у которых тип был удалён. Нажми ✎, чтобы выбрать новый."};
+
+const STEPS=[["Структура","составь список блоков: header, hero, social proof, features, pricing, FAQ, CTA, footer."],["Референс","найди образец в своих «Примерах сайтов», Land-book или Lapa Ninja."],["Один стек","shadcn/ui + Tailwind, не больше 1–2 библиотек блоков."],["Токены","заведи файл с цветами, шрифтами и отступами и держи его в контексте ИИ (AGENTS.md)."],["Блок + задача","дай ИИ код блока и задачу: «адаптируй под мой продукт, вот тексты и палитра»."],["По секции","один промпт на одну секцию: проверил и перешёл к следующей."],["Проверка","мобильная версия, формы, прямые URL, финальный тест на реальном домене."]];
+
+/* ===== Хранилище ===== */
+const LS=localStorage;
+const J=(k,d)=>{try{return JSON.parse(LS[k]??"null")??d}catch{return d}};
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+let items=J("items",null), fav=J("fav",[]), types=J("types2",null);
+if(!types){types=[...DEFAULT_TYPES,...J("types",[]).map(t=>({id:t.id,t:t.t,d:t.d||""}))]}
+if(!items){items=J("custom",[]).map(c=>({id:uid(),k:"tool",g:c.g,gt:c.gt,n:c.n,u:c.u,d:c.d||"",t:c.t||""}))}
+function save(){LS.items=JSON.stringify(items);LS.fav=JSON.stringify(fav);LS.types2=JSON.stringify(types)}
+
+/* Данные, встроенные в присланный файл */
+function mergeData(j){
+  let inc=j.items||(j.custom||[]).map(c=>({k:"tool",...c}));
+  const add=inc.filter(c=>c&&c.u&&c.n&&!items.some(x=>x.u==c.u&&(x.k||"tool")==(c.k||"tool"))).map(c=>({...c,id:c.id&&!items.some(x=>x.id==c.id)?c.id:uid()}));
+  items.push(...add);
+  for(const t of (j.types2||j.types||[])) if(t&&t.id&&!types.some(x=>x.id==t.id)) types.push({id:t.id,t:t.t,d:t.d||""});
+  fav=[...new Set([...fav,...(j.fav||[])])];
+  save(); return add.length;
+}
+const SEED=JSON.parse(document.getElementById("seed").textContent||"null");
+if(SEED&&SEED.sid&&!J("seeds",[]).includes(SEED.sid)){
+  const n=mergeData(SEED); LS.seeds=JSON.stringify([...J("seeds",[]),SEED.sid]);
+  if(n) setTimeout(()=>toast(`Загружено ссылок из присланного хаба: ${n}`),300);
+}
+save();
+
+let view=LS.view||"ex:all", sort=LS.sort||"upd", grp=LS.grp||"type", selTags=new Set();
+
+const $=id=>document.getElementById(id);
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch{return u}};
+const ico=u=>`<img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(host(u))}&sz=32" alt="" onerror="this.style.visibility='hidden'">`;
+const tagsOf=x=>[...new Set((x.tags||"").split(",").map(s=>s.trim().toLowerCase()).filter(Boolean))];
+const tm=x=>x.up||x.at||0;
+const fdate=t=>t?new Date(t).toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit",year:"2-digit"}):"";
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),2600)}
+
+function toolGroups(){
+  const A=TOOLS.map(g=>({id:g.id,t:g.t,d:g.d,i:g.i.map(x=>({n:x[0],u:x[1],d:x[2],t:x[3]}))}));
+  for(const c of items.filter(x=>x.k=="tool")){
+    let g=A.find(x=>x.id==c.g);
+    if(!g){g={id:c.g,t:c.gt||"Мои ссылки",d:"Твой раздел.",i:[]};A.push(g)}
+    g.i.push({...c,mine:1});
+  }
+  return A;
+}
+const exAll=()=>items.filter(x=>x.k=="ex");
+const typeOf=id=>types.find(t=>t.id==id)||NONE;
+const exTypes=()=>exAll().some(x=>!types.some(t=>t.id==x.g))?[...types,NONE]:types;
+const inType=(x,id)=>id=="all"||(id=="_none"?!types.some(t=>t.id==x.g):x.g==id);
+function sorted(list){
+  const s=[...list];
+  if(sort=="upd") s.sort((a,b)=>tm(b)-tm(a));
+  else if(sort=="old") s.sort((a,b)=>tm(a)-tm(b));
+  else if(sort=="add") s.sort((a,b)=>(b.at||0)-(a.at||0));
+  else if(sort=="name") s.sort((a,b)=>a.n.localeCompare(b.n,"ru"));
+  else if(sort=="tag") s.sort((a,b)=>(tagsOf(a)[0]||"я").localeCompare(tagsOf(b)[0]||"я","ru")||tm(b)-tm(a));
+  return s;
+}
+
+/* ===== Боковое меню ===== */
+function side(){
+  const tg=toolGroups();
+  const nav=(v,t,n)=>`<button class="nav ${view==v?"on":""}" data-v="${esc(v)}"><span>${esc(t)}</span>${n?`<span class="n">${n}</span>`:""}</button>`;
+  $("side").innerHTML=`
+   <div class="logo">Хаб сборки сайтов<small>инструменты и примеры</small></div>
+   <div class="sec"><span>Примеры сайтов</span><button data-types title="Изменить, удалить, упорядочить типы">⚙ типы</button></div>
+   ${nav("ex:all","Все примеры",exAll().length||"0")}
+   ${exTypes().map(t=>nav("ex:"+t.id,t.t,exAll().filter(x=>inType(x,t.id)).length)).join("")}
+   <div class="sec"><span>Инструменты</span></div>
+   ${nav("tool:all","Все инструменты",tg.reduce((s,g)=>s+g.i.length,0))}
+   ${tg.map(g=>nav("tool:"+g.id,g.t,g.i.length)).join("")}
+   <div class="sec"><span>Ещё</span></div>
+   ${nav("fav","★ Избранное",fav.length)}
+   ${nav("steps","Порядок работы")}
+   <div class="foot"><button data-act="theme">Тема</button><button data-act="share">Поделиться</button></div>`;
+}
+
+/* ===== Карточки ===== */
+const btns=(x,mine)=>`<button class="ic ${fav.includes(x.u)?"f":""}" data-fav="${esc(x.u)}" title="В избранное">★</button>
+  <button class="ic" data-copy="${esc(x.id||x.u)}" title="Скопировать, чтобы отправить другу">⧉</button>
+  ${mine?`<button class="ic" data-ed="${x.id}" title="Изменить">✎</button><button class="ic x" data-del="${x.id}" title="Удалить">×</button>`:""}`;
+function toolCard(x){
+  return `<div class="c">
+   <div class="ct">${ico(x.u)}<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.n)}">${esc(x.n)}</a>${btns(x,x.mine)}</div>
+   <p>${esc(x.d)||"&nbsp;"}</p>
+   <div class="meta">${x.t?`<span class="tag">${esc(x.t)}</span>`:""}${x.mine?`<span class="tag me">моё</span>`:""}<span class="dom">${esc(host(x.u))}</span></div></div>`;
+}
+function exCard(x,showType){
+  return `<div class="c">
+   <div class="ct">${ico(x.u)}<a href="${esc(x.u)}" target="_blank" rel="noopener" title="${esc(x.n)}">${esc(x.n)}</a>${btns(x,1)}</div>
+   <p class="note ${x.note?"":"empty"}">${x.note?esc(x.note):"Без подписи. Нажми ✎, чтобы добавить"}</p>
+   <div class="meta">${showType?`<span class="tag me">${esc(typeOf(x.g).t)}</span>`:""}${tagsOf(x).map(t=>`<button class="tag" data-tag="${esc(t)}" title="Показать все с этим тегом">#${esc(t)}</button>`).join("")}
+   <span class="dom">${esc(host(x.u))}<small title="Последнее изменение">изм. ${fdate(tm(x))}</small></span></div></div>`;
+}
+const match=(x,s)=>!s||[x.n,x.u,x.d,x.t,x.note,x.tags,x.k=="ex"?typeOf(x.g).t:""].join(" ").toLowerCase().includes(s);
+const grid=(list,f)=>`<div class="grid">${list.map(f).join("")}</div>`;
+const empty=(t,add)=>`<div class="group"><div class="empty-box">${t}${add?`<br><button class="btn pri" data-add="${add}">+ Добавить пример</button>`:""}</div></div>`;
+
+/* ===== Отрисовка ===== */
+function render(){
+  side();
+  const s=$("q").value.trim().toLowerCase();
+  let ttl="",sub="",h="",bar="",hact="";
+  const [k,id]=view.split(":");
+  if(k=="ex"){
+    const cur=id=="all"?null:typeOf(id);
+    ttl=cur?cur.t:"Примеры сайтов";
+    sub=cur?cur.d:"Сайты, которые тебе понравились, с подписями: что именно в них хорошего.";
+    hact=`<button class="btn sm" data-types>⚙ Типы</button>`;
+    const scope=exAll().filter(x=>inType(x,id));
+    // панель сортировки и тегов
+    const tc={}; scope.forEach(x=>tagsOf(x).forEach(t=>tc[t]=(tc[t]||0)+1));
+    [...selTags].forEach(t=>{if(!tc[t])selTags.delete(t)});
+    const tlist=Object.entries(tc).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"ru"));
+    if(scope.length){
+      const o=(v,t,c)=>`<option value="${v}" ${c==v?"selected":""}>${t}</option>`;
+      bar=`<div class="bar">
+        <label>Сортировка <select id="sortSel">${o("upd","Недавно изменённые",sort)}${o("old","Давно изменённые",sort)}${o("add","Недавно добавленные",sort)}${o("name","По названию",sort)}${o("tag","По тегам (А–Я)",sort)}</select></label>
+        <label>Группы <select id="grpSel">${id=="all"?o("type","По типам",grp):""}${o("tag","По тегам",grp)}${o("none","Без групп",grp)}</select></label>
+        ${selTags.size?`<button class="btn sm" data-clrtags>Сбросить теги (${selTags.size})</button>`:""}
+       </div>
+       ${tlist.length?`<div class="tags">${tlist.map(([t,n])=>`<button class="chip ${selTags.has(t)?"on":""}" data-tag="${esc(t)}">#${esc(t)}<i>${n}</i></button>`).join("")}</div>`:""}`;
+    }
+    const list=sorted(scope.filter(x=>match(x,s)&&[...selTags].every(t=>tagsOf(x).includes(t))));
+    const g=id!="all"&&grp=="type"?"none":grp;
+    if(!scope.length) h=id=="all"
+      ?empty("Пока нет ни одного примера. Сохраняй сюда сайты, которые понравились: выбирай тип (продажи, личный сайт, компания…) и пиши подпись, что в нём хорошего.","ex")
+      :empty("Здесь пока пусто. Нашёл сайт, который понравился? Сохрани его с подписью.","ex");
+    else if(!list.length) h=empty("Ничего не найдено. Попробуй убрать теги или изменить поиск.");
+    else if(g=="type"){
+      for(const t of exTypes()){const l=list.filter(x=>inType(x,t.id)); if(!l.length)continue;
+        h+=`<div class="group"><h2>${esc(t.t)} <span>${l.length}</span></h2><p class="desc">${esc(t.d)}</p>${grid(l,x=>exCard(x,false))}</div>`}
+    } else if(g=="tag"){
+      const keys=[...new Set(list.flatMap(tagsOf))].sort((a,b)=>a.localeCompare(b,"ru"));
+      for(const t of keys){const l=list.filter(x=>tagsOf(x).includes(t));
+        h+=`<div class="group"><h2>#${esc(t)} <span>${l.length}</span></h2>${grid(l,x=>exCard(x,id=="all"))}</div>`}
+      const nt=list.filter(x=>!tagsOf(x).length);
+      if(nt.length) h+=`<div class="group"><h2>Без тегов <span>${nt.length}</span></h2>${grid(nt,x=>exCard(x,id=="all"))}</div>`;
+    } else h=`<div class="group">${grid(list,x=>exCard(x,id=="all"))}</div>`;
+  }
+  else if(k=="tool"){
+    const gs=id=="all"?toolGroups():toolGroups().filter(g=>g.id==id);
+    ttl=id=="all"?"Инструменты":gs[0]?.t; sub=id=="all"?"Библиотеки блоков, анимации, генераторы и статьи для сборки сайта.":gs[0]?.d;
+    for(const g of gs){const list=g.i.filter(x=>match(x,s)); if(!list.length)continue;
+      h+=`<div class="group">${id=="all"?`<h2>${esc(g.t)} <span>${list.length}</span></h2><p class="desc">${esc(g.d)}</p>`:""}${grid(list,toolCard)}</div>`}
+    if(!h) h=empty("Ничего не найдено.");
+  }
+  else if(view=="fav"){
+    ttl="Избранное"; sub="Всё, что ты отметил звёздочкой ★.";
+    const tl=toolGroups().flatMap(g=>g.i).filter(x=>fav.includes(x.u)&&match(x,s));
+    const el=sorted(exAll().filter(x=>fav.includes(x.u)&&match(x,s)));
+    if(el.length) h+=`<div class="group"><h2>Примеры сайтов <span>${el.length}</span></h2>${grid(el,x=>exCard(x,true))}</div>`;
+    if(tl.length) h+=`<div class="group"><h2>Инструменты <span>${tl.length}</span></h2>${grid(tl,toolCard)}</div>`;
+    if(!h) h=empty("Нажми ★ на любой карточке, и она появится здесь.");
+  }
+  else { view="steps";
+    ttl="Порядок работы"; sub="Как быстро собрать сайт с помощью ИИ.";
+    h=`<div class="group"><ol class="steps">${STEPS.map(x=>`<li><b>${x[0]}:</b> ${x[1]}</li>`).join("")}</ol></div>`;
+  }
+  if(k=="tool"&&!toolGroups().some(g=>g.id==id)&&id!="all"){view="tool:all";return render()}
+  if(k=="ex"&&id!="all"&&!exTypes().some(t=>t.id==id)){view="ex:all";return render()}
+  $("ttl").textContent=ttl; $("sub").textContent=sub||""; $("hact").innerHTML=hact; $("bar").innerHTML=bar; $("m").innerHTML=h;
+  if($("sortSel")) $("sortSel").onchange=e=>{sort=LS.sort=e.target.value;render()};
+  if($("grpSel")) $("grpSel").onchange=e=>{grp=LS.grp=e.target.value;render()};
+}
+
+/* ===== Форма ссылки ===== */
+let fKind="ex", editId=null;
+function setKind(k){fKind=k;
+  [...$("kind").children].forEach(b=>b.classList.toggle("on",b.dataset.k==k));
+  $("exf").hidden=k!="ex"; $("tlf").hidden=k!="tool";
+  $("fn").placeholder=k=="ex"?"Например: Linear":"Например: Shadcnblocks";
+}
+function openForm(k,item){
+  $("frm").reset(); $("fe").textContent=""; editId=item?.id||null;
+  const [vk,vid]=view.split(":");
+  $("fty").innerHTML=types.map(t=>`<option value="${esc(t.id)}">${esc(t.t)}</option>`).join("")+`<option value="__new">+ Новый тип…</option>`;
+  $("fg").innerHTML=toolGroups().map(g=>`<option value="${esc(g.id)}">${esc(g.t)}</option>`).join("")+`<option value="__new">+ Новый раздел…</option>`;
+  $("taglist").innerHTML=[...new Set(exAll().flatMap(tagsOf))].map(t=>`<option value="${esc(t)}">`).join("");
+  if(vk=="ex"&&types.some(t=>t.id==vid)) $("fty").value=vid;
+  if(vk=="tool"&&vid!="all") $("fg").value=vid;
+  $("kind").hidden=!!item;
+  $("dt").textContent=item?(item.k=="ex"?"Изменить пример":"Изменить ссылку"):"Новая ссылка";
+  if(item){
+    $("fn").value=item.n; $("fu").value=item.u;
+    if(item.k=="ex"){if(types.some(t=>t.id==item.g))$("fty").value=item.g;$("fno").value=item.note||"";$("ftg").value=item.tags||""}
+    else{$("fd").value=item.d||"";$("fg").value=item.g;$("ft").value=item.t||""}
+  }
+  if(!types.length) $("fty").value="__new";
+  $("ntw").hidden=$("fty").value!="__new"; $("ngw").hidden=true;
+  setKind(item?item.k:k); $("dlg").showModal(); $(item&&item.k=="ex"?"fno":"fn").focus();
+}
+$("kind").onclick=e=>{if(e.target.dataset.k)setKind(e.target.dataset.k)};
+$("fty").onchange=()=>$("ntw").hidden=$("fty").value!="__new";
+$("fg").onchange=()=>$("ngw").hidden=$("fg").value!="__new";
+$("frm").onsubmit=e=>{
+  e.preventDefault(); const err=t=>$("fe").textContent=t;
+  const n=$("fn").value.trim(); if(!n) return err("Введите название");
+  let u=$("fu").value.trim(); if(!u) return err("Введите адрес сайта");
+  if(!/^https?:\/\//i.test(u)) u="https://"+u;
+  try{new URL(u)}catch{return err("Проверь адрес сайта")}
+  const all=[...toolGroups().flatMap(g=>g.i.map(x=>({...x,k:"tool"}))),...items];
+  if(all.some(x=>x.u==u&&x.id!=editId&&(x.k||"tool")==fKind)) return err("Эта ссылка уже сохранена");
+  let rec;
+  if(fKind=="ex"){
+    let g=$("fty").value;
+    if(g=="__new"){const t=$("fnt").value.trim(); if(!t) return err("Введите название нового типа");
+      const ex=types.find(x=>x.t.toLowerCase()==t.toLowerCase()); g=ex?ex.id:"t_"+uid(); if(!ex) types.push({id:g,t,d:""});}
+    const tags=tagsOf({tags:$("ftg").value}).join(", ");
+    rec={k:"ex",g,n,u,note:$("fno").value.trim(),tags};
+  } else {
+    let g=$("fg").value,gt;
+    if(g=="__new"){gt=$("fng").value.trim(); if(!gt) return err("Введите название нового раздела");
+      const ex=toolGroups().find(x=>x.t.toLowerCase()==gt.toLowerCase()); g=ex?ex.id:"g_"+uid();}
+    rec={k:"tool",g,gt,n,u,d:$("fd").value.trim(),t:$("ft").value.trim()};
+  }
+  const now=Date.now();
+  if(editId){const i=items.findIndex(x=>x.id==editId); const old=items[i];
+    if(old.u!=u&&fav.includes(old.u)) fav=fav.map(f=>f==old.u?u:f);
+    items[i]={...old,...rec,up:now};}
+  else items.push({id:uid(),at:now,up:now,...rec});
+  save(); $("dlg").close();
+  if(!editId){view=(rec.k=="ex"?"ex:":"tool:")+rec.g; LS.view=view}
+  render(); toast(editId?"Изменения сохранены":"Ссылка добавлена");
+};
+
+/* ===== Управление типами ===== */
+let tw=[];
+function openTypes(){tw=types.map(t=>({...t}));$("te").textContent="";drawTypes();$("tdlg").showModal()}
+function drawTypes(){
+  $("tlist").innerHTML=tw.map((t,i)=>{const n=exAll().filter(x=>x.g==t.id).length;
+    return `<div class="trow" data-i="${i}">
+      <input class="tn" value="${esc(t.t)}" maxlength="40" placeholder="Название">
+      <input class="td" value="${esc(t.d)}" maxlength="90" placeholder="Описание (необязательно)">
+      <div class="ops"><button data-mv="-1" title="Выше">↑</button><button data-mv="1" title="Ниже">↓</button><button class="x" data-rm title="Удалить тип">×</button></div>
+      ${n?`<small>примеров: ${n}</small>`:""}</div>`}).join("")||`<p class="hint" style="margin-top:10px">Типов нет. Добавь хотя бы один.</p>`;
+}
+function readTypes(){[...$("tlist").querySelectorAll(".trow")].forEach(r=>{const t=tw[r.dataset.i];t.t=r.querySelector(".tn").value.trim();t.d=r.querySelector(".td").value.trim()})}
+$("tlist").onclick=e=>{const b=e.target.closest("button"); if(!b)return; readTypes();
+  const i=+b.closest(".trow").dataset.i;
+  if(b.dataset.mv){const j=i+ +b.dataset.mv; if(j<0||j>=tw.length)return; [tw[i],tw[j]]=[tw[j],tw[i]]}
+  else if(b.dataset.rm!=null){const n=exAll().filter(x=>x.g==tw[i].id).length;
+    if(n&&!confirm(`В типе «${tw[i].t}» ${n} пример(ов). Удалить тип? Примеры попадут в «Без типа».`))return;
+    tw.splice(i,1)}
+  drawTypes()};
+$("tadd").onclick=()=>{readTypes();tw.push({id:"t_"+uid(),t:"",d:""});drawTypes();const l=$("tlist").querySelectorAll(".tn");l[l.length-1].focus();$("tlist").scrollTop=1e6};
+$("tsave").onclick=()=>{readTypes();
+  tw=tw.filter((t,i)=>t.t||tw[i].d); if(tw.some(t=>!t.t)) return $("te").textContent="У каждого типа должно быть название";
+  const names=tw.map(t=>t.t.toLowerCase()); if(new Set(names).size!=names.length) return $("te").textContent="Названия типов повторяются";
+  types=tw; save(); $("tdlg").close(); render(); toast("Типы сохранены")};
+
+/* ===== Поделиться ===== */
+function download(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+const today=()=>new Date().toISOString().slice(0,10);
+function buildHtml(withData=true){
+  const data=withData?{sid:uid(),from:today(),items,fav,types2:types}:null;
+  const json=JSON.stringify(data).replace(/</g,"\\u003c");
+  return SRC.replace(/<script id="seed" type="application\/json">[\s\S]*?<\/script>/,`<script id="seed" type="application/json">${json}<\/script>`);
+}
+$("sh_html").onclick=()=>{download(`хаб-сайтов-${today()}.html`,buildHtml(),"text/html"); toast("Файл скачан, его можно отправить")};
+
+/* ===== GitHub Pages ===== */
+const pubInfo=()=>J("pub",null);
+function showPubLast(){const p=pubInfo();$("publast").innerHTML=p?`Опубликовано: ${esc(p.url)} · ${new Date(p.at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"})}`:""}
+$("sh_pub").onclick=()=>{$("sdlg").close();const p=pubInfo();
+  $("pr").value=p?.repo||LS.pubRepo||"site-hub"; $("ptk").value=LS.ghTok||sessionStorage.ghTok||""; $("prem").checked=!!LS.ghTok;
+  $("pst").textContent=p?`Текущая ссылка: ${p.url}\nНажми «Опубликовать», чтобы обновить сайт.`:""; $("pcopy").hidden=!p; $("pdlg").showModal()};
+function b64(str){const by=new TextEncoder().encode(str);let bin="";for(let i=0;i<by.length;i+=0x8000)bin+=String.fromCharCode.apply(null,by.subarray(i,i+0x8000));return btoa(bin)}
+async function gh(tok,method,path,body){
+  const r=await fetch("https://api.github.com"+path,{method,headers:{Authorization:"Bearer "+tok,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28",...(body?{"Content-Type":"application/json"}:{})},body:body?JSON.stringify(body):undefined});
+  let j=null;try{j=await r.json()}catch{}
+  return {ok:r.ok,status:r.status,j};
+}
+$("pgo").onclick=async()=>{
+  const st=t=>$("pst").textContent=t;
+  const tok=$("ptk").value.trim(); let repo=$("pr").value.trim().replace(/\s+/g,"-");
+  if(!tok) return st("Вставь токен GitHub.");
+  if(!/^[\w.-]+$/.test(repo)) return st("Название репозитория: латиница, цифры, - _ .");
+  if($("prem").checked){LS.ghTok=tok}else{delete LS.ghTok;sessionStorage.ghTok=tok}
+  LS.pubRepo=repo; $("pgo").disabled=true;
+  try{
+    st("Проверяю токен…");
+    const u=await gh(tok,"GET","/user"); if(!u.ok) throw "Токен не подошёл (ошибка "+u.status+"). Проверь, что он скопирован целиком и у него есть доступ repo.";
+    const owner=u.j.login;
+    st("Проверяю репозиторий…");
+    let rp=await gh(tok,"GET",`/repos/${owner}/${repo}`);
+    if(rp.status==404){
+      if(!confirm(`Создать публичный репозиторий ${owner}/${repo}?`)) throw "Отменено.";
+      st("Создаю репозиторий…");
+      rp=await gh(tok,"POST","/user/repos",{name:repo,description:"Хаб сборки сайтов: инструменты и примеры",private:false,auto_init:true,homepage:`https://${owner}.github.io/${repo}/`});
+      if(!rp.ok) throw "Не удалось создать репозиторий: "+(rp.j?.message||rp.status);
+      await new Promise(r=>setTimeout(r,1500));
+    } else if(!rp.ok) throw "Нет доступа к репозиторию: "+(rp.j?.message||rp.status);
+    else if(rp.j.private) throw "Репозиторий приватный. На бесплатном аккаунте GitHub Pages работает только с публичными. Укажи другое название.";
+    const branch=rp.j.default_branch||"main";
+    st("Загружаю файл…");
+    const html=buildHtml($("pdata").checked);
+    for(const f of [["index.html",html],[".nojekyll",""]]){
+      const cur=await gh(tok,"GET",`/repos/${owner}/${repo}/contents/${f[0]}?ref=${branch}`);
+      if(f[0]==".nojekyll"&&cur.ok) continue;
+      const put=await gh(tok,"PUT",`/repos/${owner}/${repo}/contents/${f[0]}`,{message:`Обновление хаба ${new Date().toLocaleString("ru-RU")}`,content:b64(f[1]),branch,...(cur.ok?{sha:cur.j.sha}:{})});
+      if(!put.ok) throw "Не удалось загрузить "+f[0]+": "+(put.j?.message||put.status);
+    }
+    st("Включаю GitHub Pages…");
+    const pg=await gh(tok,"GET",`/repos/${owner}/${repo}/pages`);
+    let url=pg.ok?pg.j.html_url:null;
+    if(!pg.ok){const en=await gh(tok,"POST",`/repos/${owner}/${repo}/pages`,{source:{branch,path:"/"}});
+      if(!en.ok&&en.status!=409) throw "Файл загружен, но Pages не включились: "+(en.j?.message||en.status)+"\nВключи вручную: Settings → Pages → Branch: "+branch;
+      url=en.j?.html_url}
+    url=url||`https://${owner}.github.io/${repo}/`;
+    LS.pub=JSON.stringify({url,repo,owner,at:Date.now()});
+    st(`Готово. Ссылка для друзей:\n${url}\nПервый запуск сайта занимает 1–2 минуты, обновления тоже появляются не сразу.`);
+    $("pcopy").hidden=false; showPubLast(); toast("Хаб опубликован");
+  }catch(e){st(typeof e=="string"?e:"Ошибка сети: "+e.message)}
+  finally{$("pgo").disabled=false}
+};
+$("pcopy").onclick=async()=>{const p=pubInfo();if(!p)return;try{await navigator.clipboard.writeText(p.url)}catch{}toast("Ссылка скопирована")};
+$("sh_json").onclick=()=>{download(`hub-data-${today()}.json`,JSON.stringify({version:3,items,fav,types2:types},null,2),"application/json");toast("Резервная копия скачана")};
+$("sh_imp").onclick=()=>$("imp").click();
+$("imp").onchange=async e=>{
+  try{let t=await e.target.files[0].text(),j;
+    if(/^\s*</.test(t)){const m=t.match(/<script id="seed" type="application\/json">([\s\S]*?)<\/script>/); j=m&&JSON.parse(m[1]); if(!j) throw 0}
+    else j=JSON.parse(t);
+    const n=mergeData(j); $("sdlg").close(); render(); toast("Добавлено ссылок: "+n);
+  }catch{toast("Не удалось прочитать файл")}
+  e.target.value="";
+};
+async function copyItem(key){
+  const x=[...items,...toolGroups().flatMap(g=>g.i)].find(i=>i.id==key||i.u==key); if(!x)return;
+  const txt=[x.n+" — "+x.u,x.note||x.d,tagsOf(x).map(t=>"#"+t.replace(/\s+/g,"_")).join(" ")].filter(Boolean).join("\n");
+  try{await navigator.clipboard.writeText(txt)}catch{const ta=document.createElement("textarea");ta.value=txt;document.body.append(ta);ta.select();document.execCommand("copy");ta.remove()}
+  toast("Скопировано, можно вставить в сообщение");
+}
+
+/* ===== События ===== */
+$("addb").onclick=()=>openForm(view.startsWith("tool")?"tool":"ex");
+$("q").oninput=render;
+document.addEventListener("click",e=>{
+  const d=e.target.closest("[data-v],[data-fav],[data-ed],[data-del],[data-add],[data-tag],[data-copy],[data-types],[data-act],[data-close],[data-clrtags]"); if(!d) return;
+  const ds=d.dataset;
+  if(ds.v){view=ds.v;LS.view=view;$("q").value="";selTags.clear();render();scrollTo(0,0)}
+  else if(ds.fav){fav=fav.includes(ds.fav)?fav.filter(x=>x!=ds.fav):[...fav,ds.fav];save();render()}
+  else if(ds.ed){openForm(null,items.find(x=>x.id==ds.ed))}
+  else if(ds.del){const it=items.find(x=>x.id==ds.del); if(confirm(`Удалить «${it.n}»?`)){items=items.filter(x=>x.id!=ds.del);fav=fav.filter(x=>x!=it.u);save();render();toast("Удалено")}}
+  else if(ds.add){openForm(ds.add)}
+  else if(ds.tag!=null){if(!view.startsWith("ex")){view="ex:all";LS.view=view}
+    selTags.has(ds.tag)?selTags.delete(ds.tag):selTags.add(ds.tag);render()}
+  else if(ds.clrtags!=null){selTags.clear();render()}
+  else if(ds.copy){copyItem(ds.copy)}
+  else if(ds.types!=null){openTypes()}
+  else if(ds.close!=null){d.closest("dialog").close()}
+  else if(ds.act=="theme"){LS.th=LS.th=="l"?"d":"l";theme()}
+  else if(ds.act=="share"){showPubLast();$("sdlg").showModal()}
+});
+document.addEventListener("keydown",e=>{const a=document.activeElement.tagName;if(e.key=="/"&&a!="INPUT"&&a!="TEXTAREA"&&!document.querySelector("dialog[open]")){e.preventDefault();$("q").focus()}});
+function theme(){document.body.classList.toggle("light",LS.th=="l")}
+theme(); render();
+</script>
+</body>
+</html>
