@@ -23,6 +23,16 @@ aside{width:250px;flex-shrink:0;background:var(--side);border-right:1px solid va
 .nav:hover{background:var(--acs);color:var(--tx)}
 .nav.on{background:var(--acs);color:var(--ac);font-weight:600}
 .nav .n{font-size:12px;opacity:.7}
+.par{display:flex;align-items:center;gap:2px}
+.par .nav{font-weight:600;color:var(--tx)}
+.par.act .nav{color:var(--ac)}
+.chev{background:none;border:0;width:22px;height:30px;padding:0;color:var(--mut);font-size:17px;line-height:1;border-radius:6px;transition:transform .15s;flex-shrink:0}
+.chev:hover{color:var(--tx);background:var(--acs)}
+.chev.o{transform:rotate(90deg)}
+.kids{margin:2px 0 6px 22px;padding-left:6px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:1px}
+.kids .nav{padding:5px 10px;font-size:13.5px}
+.nav.sub{font-size:12.5px!important;color:var(--mut);opacity:.85}
+.sep{height:1px;background:var(--line);margin:10px 6px}
 .foot{margin-top:auto;padding-top:16px;display:flex;gap:6px}
 .foot button{flex:1;background:none;border:1px solid var(--line);border-radius:7px;padding:6px;font-size:12px;color:var(--mut)}
 .foot button:hover{color:var(--tx);border-color:var(--mut)}
@@ -117,7 +127,8 @@ dialog textarea{resize:vertical}
 @media(max-width:800px){
  body{flex-direction:column}
  aside{width:auto;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px;gap:4px;border-right:0;border-bottom:1px solid var(--line)}
- .logo,.sec,.nav .n{display:none}
+ .logo,.sec,.nav .n,.chev,.sep{display:none}
+ .kids{flex-direction:row;margin:0;padding:0;border:0}
  .nav{width:auto;white-space:nowrap}
  .foot{margin:0;padding:0}
  main{padding:16px}
@@ -339,18 +350,26 @@ function sorted(list){
 }
 
 /* ===== Боковое меню ===== */
+let openSec=J("open",{ex:false,tool:false});
+{const [vk,vi]=view.split(":");if(vi&&vi!="all")openSec[vk]=true}
 function side(){
   const tg=toolGroups();
-  const nav=(v,t,n)=>`<button class="nav ${view==v?"on":""}" data-v="${esc(v)}"><span>${esc(t)}</span>${n?`<span class="n">${n}</span>`:""}</button>`;
+  const nav=(v,t,n,cls="")=>`<button class="nav ${cls} ${view==v?"on":""}" data-v="${esc(v)}"><span>${esc(t)}</span>${n?`<span class="n">${n}</span>`:""}</button>`;
+  const parent=(key,v,t,n)=>{const act=view.startsWith(key+":");
+    return `<div class="par ${act?"act":""}"><button class="chev ${openSec[key]?"o":""}" data-tg="${key}" title="${openSec[key]?"Свернуть":"Развернуть"}">›</button>
+      <button class="nav ${view==v?"on":""}" data-v="${v}" data-pv="${key}"><span>${t}</span><span class="n">${n}</span></button></div>`};
   $("side").innerHTML=`
    <div class="logo">Хаб сборки сайтов<small>инструменты и примеры</small></div>
-   <div class="sec"><span>Примеры сайтов</span><button data-types title="Изменить, удалить, упорядочить типы">⚙ типы</button></div>
-   ${nav("ex:all","Все примеры",exAll().length||"0")}
-   ${exTypes().map(t=>nav("ex:"+t.id,t.t,exAll().filter(x=>inType(x,t.id)).length)).join("")}
-   <div class="sec"><span>Инструменты</span></div>
-   ${nav("tool:all","Все инструменты",tg.reduce((s,g)=>s+g.i.length,0))}
-   ${tg.map(g=>nav("tool:"+g.id,g.t,g.i.length)).join("")}
-   <div class="sec"><span>Ещё</span></div>
+   ${parent("ex","ex:all","Примеры сайтов",exAll().length||"0")}
+   <div class="kids" ${openSec.ex?"":"hidden"}>
+     ${exTypes().map(t=>nav("ex:"+t.id,t.t,exAll().filter(x=>inType(x,t.id)).length)).join("")}
+     <button class="nav sub" data-types>⚙ Изменить типы</button>
+   </div>
+   ${parent("tool","tool:all","Инструменты",tg.reduce((s,g)=>s+g.i.length,0))}
+   <div class="kids" ${openSec.tool?"":"hidden"}>
+     ${tg.map(g=>nav("tool:"+g.id,g.t,g.i.length)).join("")}
+   </div>
+   <div class="sep"></div>
    ${nav("fav","★ Избранное",fav.length)}
    ${nav("steps","Порядок работы")}
    <div class="foot"><button data-act="theme">Тема</button><button data-act="share">Поделиться</button></div>`;
@@ -617,9 +636,11 @@ async function copyItem(key){
 $("addb").onclick=()=>openForm(view.startsWith("tool")?"tool":"ex");
 $("q").oninput=render;
 document.addEventListener("click",e=>{
-  const d=e.target.closest("[data-v],[data-fav],[data-ed],[data-del],[data-add],[data-tag],[data-copy],[data-types],[data-act],[data-close],[data-clrtags]"); if(!d) return;
+  const d=e.target.closest("[data-tg],[data-v],[data-fav],[data-ed],[data-del],[data-add],[data-tag],[data-copy],[data-types],[data-act],[data-close],[data-clrtags]"); if(!d) return;
   const ds=d.dataset;
-  if(ds.v){view=ds.v;LS.view=view;$("q").value="";selTags.clear();render();scrollTo(0,0)}
+  if(ds.tg){openSec[ds.tg]=!openSec[ds.tg];LS.open=JSON.stringify(openSec);side();return}
+  if(ds.v){if(ds.pv){openSec[ds.pv]=view.startsWith(ds.pv+":")&&view==ds.v?!openSec[ds.pv]:true;LS.open=JSON.stringify(openSec)}
+    view=ds.v;LS.view=view;$("q").value="";selTags.clear();render();scrollTo(0,0)}
   else if(ds.fav){fav=fav.includes(ds.fav)?fav.filter(x=>x!=ds.fav):[...fav,ds.fav];save();render()}
   else if(ds.ed){openForm(null,items.find(x=>x.id==ds.ed))}
   else if(ds.del){const it=items.find(x=>x.id==ds.del); if(confirm(`Удалить «${it.n}»?`)){items=items.filter(x=>x.id!=ds.del);fav=fav.filter(x=>x!=it.u);save();render();toast("Удалено")}}
